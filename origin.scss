@@ -1,0 +1,151 @@
+.mui-off-canvas-left {}
+
+.close-off-canvas {
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    z-index: 999;
+    .close-icon {
+        font-size: 40px;
+        margin: 0;
+        padding: 0;
+        font-weight: bold;
+    }
+}
+
+.login-off-canvas {
+    .login-icon {
+        background-image: url(../../assets/img/offCanvas/ic_logout.png);
+        width: 56px;
+        height: 56px;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        bottom: 25px;
+        right: 25px;
+    }
+}
+
+.nav-list {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-image: url(../../assets/img/offCanvas/bg_Sidebar.png);
+    color: #fff;
+    width: 100%; // background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    padding-top: 60px;
+    .nav-item {
+        font-family: '微软雅黑', Helvetica, Arial, sans-serif;
+        color: #fff;
+        margin: 25px 0;
+        font-size: 17px;
+        padding-left: 20%;
+    }
+}
+
+
+/*复选框样式*/
+
+.checkbox-box input[type=checkbox] {
+    position: relative;
+    display: inline-block;
+    border: 0;
+    outline: 0!important;
+    top: 0;
+}
+
+.checkbox-box input[type=checkbox]:checked:before,
+.checkbox-box input[type=checkbox]:checked:after {
+    color: #2b7fa6;
+}
+
+.checkbox-box {
+    display: inline-block;
+    /* 4684a8 */
+    /* 5cb4c4 */
+    /* #2b7fa6 */
+    /* background: linear-gradient(to right, #4684a8, #5cb4c4); */
+}
+
+.checkbox-box input[type=checkbox] {
+    left: 0;
+}
+
+.checkbox-box label {
+    padding: 0;
+}
+
+.checkbox-box.checkbox-box-cube input[type=checkbox]:before,
+.checkbox-box.checkbox-box-cube input[type=checkbox]:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.checkbox-box.checkbox-box-cube input[type=checkbox]:before {
+    content: "\f096";
+}
+
+.checkbox-box.checkbox-box-cube input[type=checkbox]:checked:before {
+    /* content: "\f14a"; */
+    content: "\f046";
+}
+
+
+/*浮动按钮*/
+
+.fixed-btn-list {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 50px;
+    background-color: #ff0000;
+    .fixed-btn-item {
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        height: 50px;
+        line-height: 50px;
+        &.fixed-btn-info {
+            background-color: #D2E0E7;
+            color: #4A4A4A;
+        }
+        &.fixed-btn-primary {
+            background-color: #60BCCC;
+            color: #fff;
+        }
+    }
+    .mui-col-xs-12 {
+        .fixed-btn-item {
+            &.fixed-btn-primary {
+                background-image: linear-gradient(to right, #4684a8, #5cb4c4);
+            }
+        }
+    }
+}
+
+
+/*工具类*/
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+#pageApp {
+    margin-bottom: 50px;
+}
