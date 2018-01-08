@@ -113,5 +113,32 @@
 .text-center {
   text-align: center; }
 
+/*内联表单*/
+.form-inline {
+  border: solid 1px rgba(0, 0, 0, 0.2);
+  margin: 10px;
+  text-align: center; }
+  .form-inline .add-people {
+    font-size: 14px;
+    color: #52B2BE;
+    height: 40px;
+    line-height: 40px; }
+  .form-inline input {
+    font-size: 14px;
+    border-radius: 0;
+    border: none;
+    margin: 0; }
+  .form-inline .mui-btn.mui-btn-primary {
+    margin: 0;
+    background-color: #77CEC3;
+    color: #fff;
+    border: none;
+    border-radius: 0;
+    height: 40px;
+    width: 100%; }
+
 #pageApp {
-  margin-bottom: 50px; }
+  margin-bottom: 50px;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+  opacity: 0; }

@@ -291,7 +291,7 @@ const origin = (function () {
         * 修改标题栏文本
         */
         setTitle: function (title) {
-            $('title').text('添加订单111');
+            $('title').text(title);
         }
 
     };
@@ -304,11 +304,13 @@ const origin = (function () {
  */
 function pages(conf) {
 
+
+
     var pageApp = initVue(conf);
     if (pageApp.onLoadVue != null) {
         pageApp.onLoadVue();
+        $(conf.el).css('opacity', 1);
     }
-
 
     mui.plusReady(function () {
 
@@ -320,12 +322,17 @@ function pages(conf) {
 
     });
 
+
+
 }
 
 
 function initVue(conf) {
+    //先加上隐藏app属性
+    $(conf.el).attr('v-cloak', 'v-cloak');
 
     conf.el = '#pageApp';
+
     var vueApp = new Vue(conf);
     window.pageApp = vueApp;
     return window.pageApp;
