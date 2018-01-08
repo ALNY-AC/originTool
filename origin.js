@@ -307,16 +307,15 @@ function pages(conf) {
 
 
     var pageApp = initVue(conf);
-    if (pageApp.onLoadVue != null) {
-        pageApp.onLoadVue();
-        $(conf.el).css('opacity', 1);
+    if (pageApp.onLoadPage != null) {
+        pageApp.onLoadPage();
     }
 
     mui.plusReady(function () {
 
         initPage(conf, pageApp, function () {
-            if (pageApp.onLoad != null) {
-                pageApp.onLoad();
+            if (pageApp.onLoadPlus != null) {
+                pageApp.onLoadPlus();
             }
         });
 
