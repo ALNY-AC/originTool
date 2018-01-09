@@ -51,6 +51,10 @@ const origin = (function () {
          */
         loadPage: function (id, f) {
 
+            if (window.plus) {
+                mui.toast('请在手机端预加载页面');
+                return;
+            }
             var selfPage = plus.webview.currentWebview();//当前页面
             var launchPage = plus.webview.getLaunchWebview();//入口文件
 
@@ -76,55 +80,30 @@ const origin = (function () {
          */
         showPage: function (id) {
 
-            var selfPage = plus.webview.currentWebview();//当前页面
-            var launchPage = plus.webview.getLaunchWebview();//入口文件
+            if (window.puls) {
+                //手机模式
+                var selfPage = plus.webview.currentWebview();//当前页面
+                var launchPage = plus.webview.getLaunchWebview();//入口文件
 
-            mui.fire(launchPage, 'showPage', {
-                pageId: selfPage.id,
-                showPageId: id,
-            });
+                mui.fire(launchPage, 'showPage', {
+                    pageId: selfPage.id,
+                    showPageId: id,
+                });
 
-
-
-            return;
-            //先找找看有没有相关窗口A
-            var p = plus.webview.getWebviewById(id);
-            if (p != null) {
-
-                //已有数据，直接加载
-
-                if (origin.pageList[id] != null) {
-                    //代表是入口文件，通过入口文件的配置打开
-                    var config = origin.pageList[id].config;
-                    mui.openWindow(config);
-                } else {
-                    //否则就ajax取得配置
-
-                    $.getJSON('../../' + id + '.json', function (conf) {
-
-                        var a = {
-                            url: id + '.html',
-                            id: id,
-                        };
-                        var b = conf.pageConfig;
-                        var c = $.extend(true, a, b);
-                        mui.openWindow(c);
-
-                    });
-
-                }
 
             } else {
-
-                origin.loadPage(id, function (page) {
-                    mui.openWindow({
-                        id: id,
-                    });
-                });
+                //电脑模式
+                window.location.href = '../../' + id;
             }
+
+
+
         },
         showNav: function () {
-
+            if (window.plus) {
+                mui.toast('请在手机端打开导航栏');
+                return;
+            }
             var p = plus.webview.getWebviewById('pages/nav/nav'); //导航栏页面
             var selfPage = plus.webview.currentWebview(); //当前页面
 
@@ -153,14 +132,9 @@ const origin = (function () {
 
         },
         close: function (id) {
+
             obj.pageList[id] = null;
             plus.webview.close(id);
-        },
-        /**
-         * 修改当前页标题
-         */
-        setTitle: function (title) {
-
         },
         /**
          * 初始化函数，
@@ -190,6 +164,12 @@ const origin = (function () {
          * 触发目标窗口事件
          */
         fire: function (a, b, c, d) {
+            if (!window.plus) {
+                //pc模式
+                mui.toast('请在手机端调用[ fire ] 事件');
+                console.error('请在手机端调用[ fire ] 事件');
+                return;
+            }
 
             //两种模式判断。
             //模式一：id名后面不带函数
