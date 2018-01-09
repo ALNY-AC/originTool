@@ -101,7 +101,7 @@ const origin = (function () {
         },
         showNav: function () {
             if (!window.plus) {
-                mui.toast('请在手机端打开导航栏');
+                window.location.href = '../../' + 'pages/nav/nav';
                 return;
             }
             var p = plus.webview.getWebviewById('pages/nav/nav'); //导航栏页面
@@ -115,20 +115,17 @@ const origin = (function () {
                 }
             });
 
-            //取得导航栏页面的配置项
-            $.getJSON('../../pages/nav/nav' + '.json', function (res) {
-                var a = {
-                    url: p.id + '.html',
-                    id: p.id,
-                };
-                var b = res.pageConfig;
-                var c = $.extend(true, a, b);
-                origin.fire('pages/nav/nav', 'show', {
-                    pageId: selfPage.id
-                });
-                mui.openWindow(c);
-
+            origin.fire('pages/nav/nav', 'show', {
+                pageId: selfPage.id
             });
+
+            var a = {
+                url: p.id + '.html',
+                id: p.id,
+            };
+            mui.openWindow(a);
+
+
 
         },
         close: function (id) {
