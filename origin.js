@@ -93,7 +93,7 @@ const origin = (function () {
 
             } else {
                 //电脑模式
-                window.location.href = '../../' + id;
+                window.location.href = '../../' + id + '.html';
             }
 
 
@@ -101,7 +101,7 @@ const origin = (function () {
         },
         showNav: function () {
             if (!window.plus) {
-                window.location.href = '../../' + 'pages/nav/nav';
+                window.location.href = '../../' + 'pages/nav/nav.html';
                 return;
             }
             var p = plus.webview.getWebviewById('pages/nav/nav'); //导航栏页面
