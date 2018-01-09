@@ -51,7 +51,7 @@ const origin = (function () {
          */
         loadPage: function (id, f) {
 
-            if (window.plus) {
+            if (!window.plus) {
                 mui.toast('请在手机端预加载页面');
                 return;
             }
@@ -100,7 +100,7 @@ const origin = (function () {
 
         },
         showNav: function () {
-            if (window.plus) {
+            if (!window.plus) {
                 mui.toast('请在手机端打开导航栏');
                 return;
             }
