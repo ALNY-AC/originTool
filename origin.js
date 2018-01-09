@@ -600,3 +600,26 @@ var formatJson = function (json, options) {
     return formatted;
 };
 
+
+$(document).on('touchstart', '.test-tool-item', function () {
+    $(this).addClass('active');
+});
+$(document).on('touchend', '.test-tool-item', function () {
+    $('.test-tool-box').fadeOut(100);
+    $(this).removeClass('active');
+});
+
+$(document).on('tap', '.test-tool', function () {
+    $('.test-tool-box').fadeIn(100);
+    return false;
+});
+
+$(document).on('tap', '.test-tool-box-list', function () {
+    return false;
+});
+
+$(document).on('tap', '.test-tool-box', function () {
+    $(this).fadeOut(100);
+    return false;
+});
+
