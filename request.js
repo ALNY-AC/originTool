@@ -123,13 +123,27 @@ function init() {
             request(list, function () {
                 //再导入page依赖
                 $.getJSON(name + '.json', function (res) {
-                    var _list = res.request;
-                    request(_list, function () {
-                        //最后导入自定义依赖
+
+                    var _list;
+
+                    if (res.request != null && res.request.length > 0) {
+
+                        _list = res.request;
+                        request(_list, function () {
+                            //最后导入自定义依赖
+                            request([name + ".css"], function () { })
+                            request([name + ".js"], function () { })
+
+                        });
+
+                    } else {
+
                         request([name + ".css"], function () { })
                         request([name + ".js"], function () { })
 
-                    });
+                    }
+
+                    
 
                 });
 
