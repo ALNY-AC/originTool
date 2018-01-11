@@ -1,6 +1,10 @@
 // @ts-nocheck
 
-document.getElementById('pageApp').style.display = 'none';
+// document.getElementById('pageApp').style.display = 'none';
+
+
+var html = document.getElementsByTagName('html') [0];
+html.style.display = 'none';
 
 var modList = {};
 
@@ -152,6 +156,9 @@ function init() {
 
 }
 
-init();
+window.onload = function () {
+    init();
+}
+
 
 

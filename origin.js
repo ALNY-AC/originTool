@@ -318,7 +318,7 @@ function pages(conf) {
                 });
 
             });
-            var $page = $('#pageApp');
+            var $page = $('html');
             $page.fadeIn();
 
         }
