@@ -291,9 +291,10 @@ var origin = (function () {
  */
 function pages(conf) {
 
-    $.getJSON('../../app.json', function (res) {
-        var config = res;
 
+    debug(conf.debug, function () {
+
+        delete conf["debug"];
 
         var pageApp = initVue(conf);
 
@@ -312,11 +313,12 @@ function pages(conf) {
 
             });
         }
-        if (config.debug) {
-            debug();
-        }
 
     });
+
+
+
+
 
 }
 
@@ -610,29 +612,60 @@ var formatJson = function (json, options) {
 };
 
 // debug
-function debug() {
+function debug(debugList, f) {
 
-    $('body').append('<div class="test-tool">debug</div>');
 
-    $(document).on('touchstart', '.test-tool-item', function () {
-        $(this).addClass('active');
-    });
-    $(document).on('touchend', '.test-tool-item', function () {
-        $('.test-tool-box').fadeOut(100);
-        $(this).removeClass('active');
+    $.getJSON('../../app.json', function (res) {
+        var config = res;
+        if (config.debug) {
+
+            if ($('#pageApp').length <= 0) {
+                console.error('debug():页面上没有#pageApp！');
+                return;
+            }
+
+
+            $('#pageApp').append('<div class="test-tool">debug</div>');
+            var $box = $('<div/>').addClass('test-tool-box');
+            var $list = $('<div/>').addClass('test-tool-box-list');
+            $box.append($list);
+
+            $('#pageApp').append($box);
+
+
+            for (var i = 0; i < debugList.length; i++) {
+                var item = debugList[i];
+                $item = $('<div/>').addClass('test-tool-item');
+                $item.attr('v-on:tap.stop', item.event);
+                $item.text(item.title);
+                $list.append($item);
+            }
+
+            $(document).on('touchstart', '.test-tool-item', function () {
+                $(this).addClass('active');
+            });
+            $(document).on('touchend', '.test-tool-item', function () {
+                $('.test-tool-box').fadeOut(100);
+                $(this).removeClass('active');
+            });
+
+            $(document).on('tap', '.test-tool', function () {
+                $('.test-tool-box').fadeIn(100);
+                return false;
+            });
+
+            $(document).on('tap', '.test-tool-box-list', function () {
+                return false;
+            });
+
+            $(document).on('tap', '.test-tool-box', function () {
+                $(this).fadeOut(100);
+                return false;
+            });
+        }
+        f();
+
+
     });
 
-    $(document).on('tap', '.test-tool', function () {
-        $('.test-tool-box').fadeIn(100);
-        return false;
-    });
-
-    $(document).on('tap', '.test-tool-box-list', function () {
-        return false;
-    });
-
-    $(document).on('tap', '.test-tool-box', function () {
-        $(this).fadeOut(100);
-        return false;
-    });
 }
