@@ -291,10 +291,16 @@ var origin = (function () {
  */
 function pages(conf) {
 
+    var debugList;
 
-    debug(conf.debug, function () {
+    if (conf.debug == null) {
+        conf.debug = [];
+    }
+    debugList = conf.debug;
+    delete conf["debug"];
 
-        delete conf["debug"];
+    debug(debugList, function () {
+
 
         var pageApp = initVue(conf);
 
@@ -315,7 +321,6 @@ function pages(conf) {
         }
 
     });
-
 
 
 
@@ -614,6 +619,11 @@ var formatJson = function (json, options) {
 // debug
 function debug(debugList, f) {
 
+    if (debugList.length <= 0) {
+
+        f();
+        return;
+    }
 
     $.getJSON('../../app.json', function (res) {
         var config = res;
