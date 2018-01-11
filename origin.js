@@ -1,7 +1,12 @@
 // @ts-nocheck
-const origin = (function () {
+// @ts-nocheck
+
+
+
+var origin = (function () {
 
     var obj = {
+
         /**
          * 全局配置项
          */
@@ -51,12 +56,13 @@ const origin = (function () {
          */
         loadPage: function (id, f) {
 
-            if (!window.plus) {
+            if (window.plus == null) {
                 mui.toast('请在手机端预加载页面');
                 return;
             }
-            var selfPage = plus.webview.currentWebview();//当前页面
-            var launchPage = plus.webview.getLaunchWebview();//入口文件
+
+            var selfPage = plus.webview.currentWebview(); //当前页面
+            var launchPage = plus.webview.getLaunchWebview(); //入口文件
 
             mui.fire(launchPage, 'loadPage', {
                 pageId: selfPage.id,
@@ -68,11 +74,9 @@ const origin = (function () {
                 var page = plus.webview.getWebviewById(id);
                 if (f) f(page);
                 window.removeEventListener('_loadPage', loadFunction);
+
             }
             window.addEventListener('_loadPage', loadFunction, false);
-
-
-
 
         },
         /** 
@@ -80,23 +84,22 @@ const origin = (function () {
          */
         showPage: function (id) {
 
-            if (window.puls) {
+            if (window.plus != null) {
                 //手机模式
-                var selfPage = plus.webview.currentWebview();//当前页面
-                var launchPage = plus.webview.getLaunchWebview();//入口文件
+
+                var selfPage = plus.webview.currentWebview(); //当前页面
+                var launchPage = plus.webview.getLaunchWebview(); //入口文件
 
                 mui.fire(launchPage, 'showPage', {
                     pageId: selfPage.id,
                     showPageId: id,
                 });
 
-
             } else {
+
                 //电脑模式
                 window.location.href = '../../' + id + '.html';
             }
-
-
 
         },
         showNav: function () {
@@ -115,16 +118,26 @@ const origin = (function () {
                 }
             });
 
-            origin.fire('pages/nav/nav', 'show', {
-                pageId: selfPage.id
+            $.getJSON('../../pages/nav/nav' + '.json', function (res) {
+
+                var a = {
+                    url: p.id + '.html',
+                    id: p.id,
+                };
+                var b = res.pageConfig;
+                var c = $.extend(true, a, b);
+                origin.fire('pages/nav/nav', 'show', {
+                    pageId: selfPage.id
+                });
+                mui.openWindow(c);
+
             });
 
-            var a = {
-                url: p.id + '.html',
-                id: p.id,
-            };
-            mui.openWindow(a);
+        },
+        hideNav: function () {
 
+            var selfPage = plus.webview.currentWebview();
+            // var navPage = plus.webview.getWebviewById('pages/nav/nav'); //导航栏页面
 
 
         },
@@ -152,8 +165,6 @@ const origin = (function () {
 
                 });
 
-
-
             });
 
         },
@@ -180,25 +191,25 @@ const origin = (function () {
 
             //判断id
             a = a.split(':');
-            id = a[0];//id
+            id = a[0]; //id
 
             if (a.length <= 1) {
                 //模式一：id名后面不带函数
                 // console.log('模式一');
-                eventName = b;//事件名
-                data = c;//数据
-                fun = d;//数据
+                eventName = b; //事件名
+                data = c; //数据
+                fun = d; //数据
 
             } else {
                 //模式二：id后面带函数
                 // console.log('模式二');
-                eventName = a[1];//事件名
-                data = b;//数据
-                fun = c;//数据    
+                eventName = a[1]; //事件名
+                data = b; //数据
+                fun = c; //数据    
 
             }
 
-            var p = plus.webview.getWebviewById(id);//接收事件的窗口
+            var p = plus.webview.getWebviewById(id); //接收事件的窗口
             if (p == null) {
                 //窗口未加载
                 var info = '窗口未加载：[ ' + id + ' ]';
@@ -206,12 +217,12 @@ const origin = (function () {
                 mui.toast(info);
                 return;
             }
-            var selfPage = plus.webview.currentWebview();//发送事件的窗口
+            var selfPage = plus.webview.currentWebview(); //发送事件的窗口
 
             //组装数据
             var _data = {};
-            _data.data = data;//发送到另一个窗口的数据
-            _data.pageId = selfPage.id;//发送事件的窗口的id，用于事件回调
+            _data.data = data; //发送到另一个窗口的数据
+            _data.pageId = selfPage.id; //发送事件的窗口的id，用于事件回调
             _data.eventName = eventName;
 
             if (fun) {
@@ -220,7 +231,7 @@ const origin = (function () {
 
                     var res = e.detail.data;
                     fun(res);
-                    window.removeEventListener('callback_a', callbackFun);//注销事件
+                    window.removeEventListener('callback_a', callbackFun); //注销事件
                 }
                 //监听事件
                 window.addEventListener('callback_a', callbackFun, false);
@@ -265,8 +276,8 @@ const origin = (function () {
             localStorage.clear();
         },
         /**
-        * 修改标题栏文本
-        */
+         * 修改标题栏文本
+         */
         setTitle: function (title) {
             $('title').text(title);
         }
@@ -275,44 +286,49 @@ const origin = (function () {
     return obj;
 
 }());
-
 /**
  * 页面的配置函数
  */
 function pages(conf) {
 
 
-
     var pageApp = initVue(conf);
-    if (pageApp.onLoadPage != null) {
-        pageApp.onLoadPage();
-    }
 
-    mui.plusReady(function () {
+    if (pageApp != false) {
+        if (pageApp.onLoadPage != null) {
+            pageApp.onLoadPage();
+        }
+        mui.init();
+        mui.plusReady(function () {
 
-        initPage(conf, pageApp, function () {
-            if (pageApp.onLoadPlus != null) {
-                pageApp.onLoadPlus();
-            }
+            initPage(conf, pageApp, function () {
+                if (pageApp.onLoadPlus != null) {
+                    pageApp.onLoadPlus();
+                }
+            });
+
         });
-
-    });
-
-
+    }
+    debug();
 
 }
 
-
 function initVue(conf) {
     //先加上隐藏app属性
-    $(conf.el).attr('v-cloak', 'v-cloak');
+    // $(conf.el).attr('v-cloak', 'v-cloak');
 
     conf.el = '#pageApp';
+    //判断pageAPP是否存在
 
+    if ($(conf.el).length <= 0) {
+        console.error('请创建#pageApp并将整个内容区包围');
+        return false;
+    }
     var vueApp = new Vue(conf);
     window.pageApp = vueApp;
     return window.pageApp;
 }
+
 function initPage(conf, pageApp, f) {
 
     var selfPage = plus.webview.currentWebview();
@@ -331,6 +347,7 @@ function initPage(conf, pageApp, f) {
             mui.init();
         }
 
+
         //隐藏导航栏事件
         pageApp.hideNav = function () {
             selfPage.setStyle({
@@ -344,11 +361,11 @@ function initPage(conf, pageApp, f) {
         //匿名回调函数事件页面b
         window.addEventListener('callback_b', function (e) {
 
-            var data = e.detail.data;//传来的数据
-            var eventName = e.detail.eventName;//想要调用的事件名
-            var pageId = e.detail.pageId;//事件返回的页面id
+            var data = e.detail.data; //传来的数据
+            var eventName = e.detail.eventName; //想要调用的事件名
+            var pageId = e.detail.pageId; //事件返回的页面id
 
-            var selfPage = plus.webview.currentWebview();//当前页面
+            var selfPage = plus.webview.currentWebview(); //当前页面
             // 事件调用
             pageApp.pageId = pageId;
 
@@ -378,16 +395,19 @@ function initPage(conf, pageApp, f) {
 /** 
  * 向触发本页面函数的页面返回数据
  * 
-*/
+ */
 function push(data, f) {
+
 
     //当前页面的app
     var pageApp = window.pageApp;
-    var p = plus.webview.getWebviewById(pageApp.pageId);//接收事件的窗口
+    var p = plus.webview.getWebviewById(pageApp.pageId); //接收事件的窗口
 
     mui.fire(p, 'callback_a', {
         data: data
     });
+
+
 
 }
 
@@ -395,7 +415,7 @@ function App(conf) {
     window.addEventListener('getApp', function (e) {
 
         var pageId = e.detail.pageId;
-        var page = plus.webview.getWebviewById(pageId);//返回app的目标页面
+        var page = plus.webview.getWebviewById(pageId); //返回app的目标页面
         mui.fire(page, 'getApp', {
             app: conf.app
         });
@@ -404,12 +424,13 @@ function App(conf) {
 
     window.addEventListener('showPage', function (e) {
 
-        var pageId = e.detail.pageId;//调用该事件的页面
-        var showPageId = e.detail.showPageId;//想要打开的页面
+        var pageId = e.detail.pageId; //调用该事件的页面
+        var showPageId = e.detail.showPageId; //想要打开的页面
 
-        var page = plus.webview.getWebviewById(showPageId);//要打开的页面
+        var page = plus.webview.getWebviewById(showPageId); //要打开的页面
 
         if (origin.pageList[showPageId] != null) {
+
             //注册过的页面
             var config = origin.pageList[showPageId].config;
             mui.openWindow(config);
@@ -428,68 +449,73 @@ function App(conf) {
 
         }
 
-
     }, false);
 
     window.addEventListener('loadPage', function (e) {
 
-        var pageId = e.detail.pageId;//调用该事件的页面
-        var loadPageId = e.detail.loadPageId;//想要加载的页面
+        var pageId = e.detail.pageId; //调用该事件的页面
+        var loadPageId = e.detail.loadPageId; //想要加载的页面
 
-        $.getJSON(loadPageId + '.json', function (res) {
-            var a = {
-                url: loadPageId + '.html',
-                id: loadPageId,
-            };
-            var b = res.pageConfig;
-            var c = $.extend(true, a, b);
+        $.ajax({
+            url: loadPageId + '.json',
+            success: function (res) {
+                res = JSON.parse(res);
 
-            //加载样式
-            if (c.styles != null) {
+                var a = {
+                    url: loadPageId + '.html',
+                    id: loadPageId,
+                };
+                var b = res.pageConfig;
+                var c = $.extend(true, a, b);
 
-                //加载标题栏
-                if (c.styles.titleNView != undefined) {
+                //加载样式
+                if (c.styles != null) {
 
-                    //加载按钮
-                    if (c.styles.titleNView.buttons != undefined) {
-                        for (var i = 0; i < c.styles.titleNView.buttons.length; i++) {
-                            var name = c.styles.titleNView.buttons[i].onclick;
-                            c.styles.titleNView.buttons[i].onclick = function (eventName) {
-                                return function () {
-                                    origin.fire(loadPageId, eventName);
-                                }
-                            }(name);
+                    //加载标题栏
+                    if (c.styles.titleNView != undefined) {
+
+                        //加载按钮
+                        if (c.styles.titleNView.buttons != undefined) {
+                            for (var i = 0; i < c.styles.titleNView.buttons.length; i++) {
+                                var name = c.styles.titleNView.buttons[i].onclick;
+                                c.styles.titleNView.buttons[i].onclick = function (eventName) {
+                                    return function () {
+                                        origin.fire(loadPageId, eventName);
+                                    }
+                                }(name);
+                            }
                         }
                     }
+
                 }
 
+                //预加载页面
+                var page = mui.preload(c);
+
+                //监听显示事件
+                page.addEventListener('show', function (e) {
+                    origin.fire(loadPageId, 'onShow');
+                }, false);
+
+                //监听关闭事件
+                page.addEventListener('hide', function (e) {
+                    origin.fire(loadPageId, 'onHide');
+                }, false);
+
+                origin.pageList[loadPageId] = page;
+                origin.pageList[loadPageId].config = c;
+
+                var _page = plus.webview.getWebviewById(pageId);
+
+                mui.fire(_page, '_loadPage');
+
+            },
+            error: function () {
+                console.error(loadPageId + '.json  文件错误！');
             }
-
-            //预加载页面
-            var page = mui.preload(c);
-
-            //监听显示事件
-            page.addEventListener('show', function (e) {
-                origin.fire(loadPageId, 'onShow');
-            }, false);
-
-            //监听关闭事件
-            page.addEventListener('hide', function (e) {
-                origin.fire(loadPageId, 'onHide');
-            }, false);
-
-            origin.pageList[loadPageId] = page;
-            origin.pageList[loadPageId].config = c;
-
-
-            var _page = plus.webview.getWebviewById(pageId);
-
-            mui.fire(_page, '_loadPage');
-
         });
 
     }, false);
-
 
     origin.init(function (f) {
 
@@ -501,13 +527,12 @@ function App(conf) {
 
 function getApp(f) {
 
-    var page = plus.webview.getLaunchWebview();//入口文件
-    var selfPage = plus.webview.currentWebview();//本页面
+    var page = plus.webview.getLaunchWebview(); //入口文件
+    var selfPage = plus.webview.currentWebview(); //本页面
 
     mui.fire(page, 'getApp', {
         pageId: selfPage.id
     });
-
 
     var getAppFunction = function (e) {
         var app = e.detail.app;
@@ -577,26 +602,27 @@ var formatJson = function (json, options) {
     return formatted;
 };
 
+// debug
+function debug() {
+    $(document).on('touchstart', '.test-tool-item', function () {
+        $(this).addClass('active');
+    });
+    $(document).on('touchend', '.test-tool-item', function () {
+        $('.test-tool-box').fadeOut(100);
+        $(this).removeClass('active');
+    });
 
-$(document).on('touchstart', '.test-tool-item', function () {
-    $(this).addClass('active');
-});
-$(document).on('touchend', '.test-tool-item', function () {
-    $('.test-tool-box').fadeOut(100);
-    $(this).removeClass('active');
-});
+    $(document).on('tap', '.test-tool', function () {
+        $('.test-tool-box').fadeIn(100);
+        return false;
+    });
 
-$(document).on('tap', '.test-tool', function () {
-    $('.test-tool-box').fadeIn(100);
-    return false;
-});
+    $(document).on('tap', '.test-tool-box-list', function () {
+        return false;
+    });
 
-$(document).on('tap', '.test-tool-box-list', function () {
-    return false;
-});
-
-$(document).on('tap', '.test-tool-box', function () {
-    $(this).fadeOut(100);
-    return false;
-});
-
+    $(document).on('tap', '.test-tool-box', function () {
+        $(this).fadeOut(100);
+        return false;
+    });
+}

@@ -1,3 +1,4 @@
+
 .mui-off-canvas-left {}
 
 .close-off-canvas {
@@ -105,7 +106,7 @@
     right: 0;
     left: 0;
     height: 50px;
-    background-color: #ff0000;
+    z-index: 99999;
     .fixed-btn-item {
         display: block;
         width: 100%;
@@ -189,6 +190,7 @@
     padding: 5px 10px;
     right: 10px;
     bottom: 60px;
+    z-index: 9999999;
 }
 
 .test-tool-box {
@@ -200,6 +202,7 @@
     bottom: 0;
     background-color: rgba($color: #000000, $alpha: 0.3);
     z-index: 1;
+    z-index: 99999999;
     color: #000;
     .test-tool-box-list {
         position: absolute;
@@ -219,5 +222,28 @@
                 background-color: #ddd;
             }
         }
+    }
+}
+
+
+/*标签样式*/
+
+.label {
+    padding: 5px;
+    border-radius: 5px;
+    border: solid 1px #BFBFBF;
+    color: #BFBFBF;
+    font-size: 13px;
+    &.label-red {
+        border-color: #FAB0B9;
+        color: #E96373;
+    }
+    &.label-blue {
+        border-color: #77CEC3;
+        color: #77CEC3;
+    }
+    &.label-gray {
+        border-color: #BFBFBF;
+        color: #BFBFBF;
     }
 }

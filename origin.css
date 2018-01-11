@@ -85,7 +85,7 @@
   right: 0;
   left: 0;
   height: 50px;
-  background-color: #ff0000; }
+  z-index: 99999; }
   .fixed-btn-list .fixed-btn-item {
     display: block;
     width: 100%;
@@ -149,7 +149,8 @@
   border-radius: 5px;
   padding: 5px 10px;
   right: 10px;
-  bottom: 60px; }
+  bottom: 60px;
+  z-index: 9999999; }
 
 .test-tool-box {
   display: none;
@@ -160,6 +161,7 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: 1;
+  z-index: 99999999;
   color: #000; }
   .test-tool-box .test-tool-box-list {
     position: absolute;
@@ -179,3 +181,20 @@
       transition: all 0.3s; }
       .test-tool-box .test-tool-box-list .test-tool-item.active {
         background-color: #ddd; }
+
+/*标签样式*/
+.label {
+  padding: 5px;
+  border-radius: 5px;
+  border: solid 1px #BFBFBF;
+  color: #BFBFBF;
+  font-size: 13px; }
+  .label.label-red {
+    border-color: #FAB0B9;
+    color: #E96373; }
+  .label.label-blue {
+    border-color: #77CEC3;
+    color: #77CEC3; }
+  .label.label-gray {
+    border-color: #BFBFBF;
+    color: #BFBFBF; }
