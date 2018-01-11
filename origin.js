@@ -291,25 +291,32 @@ var origin = (function () {
  */
 function pages(conf) {
 
+    $.getJSON('../../app.json', function (res) {
+        var config = res;
 
-    var pageApp = initVue(conf);
 
-    if (pageApp != false) {
-        if (pageApp.onLoadPage != null) {
-            pageApp.onLoadPage();
-            mui.init();
-        }
-        mui.plusReady(function () {
+        var pageApp = initVue(conf);
 
-            initPage(conf, pageApp, function () {
-                if (pageApp.onLoadPlus != null) {
-                    pageApp.onLoadPlus();
-                }
+        if (pageApp != false) {
+            if (pageApp.onLoadPage != null) {
+                pageApp.onLoadPage();
+                mui.init();
+            }
+            mui.plusReady(function () {
+
+                initPage(conf, pageApp, function () {
+                    if (pageApp.onLoadPlus != null) {
+                        pageApp.onLoadPlus();
+                    }
+                });
+
             });
+        }
+        if (config.debug) {
+            debug();
+        }
 
-        });
-    }
-    debug();
+    });
 
 }
 
@@ -604,6 +611,9 @@ var formatJson = function (json, options) {
 
 // debug
 function debug() {
+
+    $('body').append('<div class="test-tool">debug</div>');
+
     $(document).on('touchstart', '.test-tool-item', function () {
         $(this).addClass('active');
     });
