@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+document.getElementById('pageApp').style.display = 'none';
 
 var modList = {};
 

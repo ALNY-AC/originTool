@@ -318,6 +318,9 @@ function pages(conf) {
                 });
 
             });
+            var $page = $('#pageApp');
+            $page.fadeIn();
+
         }
 
     });
