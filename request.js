@@ -5,6 +5,7 @@ var modList = {};
 
 function request(list, f) {
 
+
     if (list.length <= 0) {
         return;
     }
@@ -24,6 +25,7 @@ function request(list, f) {
         loadMod(url);
     }
     validate(f);
+
 
 }
 function validate(f) {
@@ -63,13 +65,17 @@ function loadMod(url) {
         var _script = document.createElement('script');
         _script.type = 'text/javascript';
         _script.charset = 'utf-8';
-        _script.async = true;
+        _script.async = false;
         _script.src = url;
         _script.onload = function () {
             modList[url].isLoad = true;
         }
+        _script.onerror = function () {
+            console.error('[ ' + url + ' ] 文件出错或不存在');
+        }
 
         document.body.appendChild(_script);
+
 
         modList[url].$script = _script;
     }
@@ -84,7 +90,9 @@ function loadMod(url) {
         _link.onload = function () {
             modList[url].isLoad = true;
         }
-
+        _link.onerror = function () {
+            console.error('[ ' + url + ' ]文件出错或不存在');
+        }
         document.head.appendChild(_link);
 
         modList[url].$script = _link;
@@ -97,24 +105,9 @@ function init() {
     name = name[name.length - 1];
     name = name.split('.') [0];
 
-    // request(["../../utils/mui/css/mui.min.css"], function () { })
-    // request(["../../utils/font/css/font-awesome.min.css"], function () { })
-    // request(["../../utils/origin/origin.css"], function () { })
-    // request(["../../app.css"], function () { })
-    // request(["orderQuery.css"], function () { })
-
-
-
-    // "../../utils/mui/js/mui.min.js",
-    // "../../utils/mui/css/mui.min.css",
-
     request([
         '../../utils/jquery/jquery.js',
     ], function () {
-
-
-
-
 
         $.getJSON('../../app.json', function (res) {
             var list = res.request;
@@ -131,8 +124,10 @@ function init() {
                         _list = res.request;
                         request(_list, function () {
                             //最后导入自定义依赖
+
                             request([name + ".css"], function () { })
                             request([name + ".js"], function () { })
+
 
                         });
 
@@ -143,7 +138,7 @@ function init() {
 
                     }
 
-                    
+
 
                 });
 
@@ -156,6 +151,6 @@ function init() {
 
 }
 
-
 init();
+
 

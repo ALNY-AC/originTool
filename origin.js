@@ -297,8 +297,8 @@ function pages(conf) {
     if (pageApp != false) {
         if (pageApp.onLoadPage != null) {
             pageApp.onLoadPage();
+            mui.init();
         }
-        mui.init();
         mui.plusReady(function () {
 
             initPage(conf, pageApp, function () {
