@@ -85,7 +85,7 @@
   right: 0;
   left: 0;
   height: 50px;
-  z-index: 99999; }
+  z-index: 9; }
   .fixed-btn-list .fixed-btn-item {
     display: block;
     width: 100%;
@@ -198,3 +198,13 @@
   .label.label-gray {
     border-color: #BFBFBF;
     color: #BFBFBF; }
+
+.font-14 {
+  font-size: 14px; }
+
+.cube {
+  display: block;
+  width: 100%;
+  background-color: transparent; }
+  .cube.cube-30 {
+    height: 30px; }

@@ -299,7 +299,8 @@ function pages(conf) {
     debugList = conf.debug;
     delete conf["debug"];
 
-    debug(debugList, function () {
+    debug(debugList, function (isDebug) {
+        window.isDebug = isDebug;
 
 
         var pageApp = initVue(conf);
@@ -622,14 +623,15 @@ var formatJson = function (json, options) {
 // debug
 function debug(debugList, f) {
 
-    if (debugList.length <= 0) {
-
-        f();
-        return;
-    }
 
     $.getJSON('../../app.json', function (res) {
+
         var config = res;
+
+        if (debugList.length <= 0) {
+            f(config.debug);
+            return;
+        }
         if (config.debug) {
 
             if ($('#pageApp').length <= 0) {
@@ -676,7 +678,7 @@ function debug(debugList, f) {
                 return false;
             });
         }
-        f();
+        f(config.debug);
 
 
     });

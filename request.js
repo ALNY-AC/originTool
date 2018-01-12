@@ -111,7 +111,7 @@ function init() {
     name = name.split('.') [0];
 
     request([
-        '../../utils/jquery/jquery.js',
+        '../../utils/jquery/jquery.min.js',
     ], function () {
 
         $.getJSON('../../app.json', function (res) {
@@ -142,7 +142,6 @@ function init() {
                         request([name + ".js"], function () { })
 
                     }
-
 
 
                 });
