@@ -55,65 +55,68 @@ function o_ajax(conf, auto, fun) {
                 if (typeof (res) == 'object') {
                     res = res;
                 } else {
-
                     res = JSON.parse(res);
-
-
-
                 }
 
-                if (res.res == -991) {
-                    //过期
-                    origin.showPage('pages/login/login');
-                    return;
-                }
-
-                if (rse.res == -992) {
-                    //未登录
-                    origin.showPage('pages/login/login');
-                    return;
-                }
-
-                if (auto === true) {
-                    //自动更新回调
-                    if (conf._success) {
-                        //成功回调
-                        conf._success(res);
-                    }
-                } else {
-                    //非自动更新回调
-                    if (conf.success) {
-                        //成功回调
-                        conf.success(res);
-                    }
-                }
-                if (fun) {
-                    fun(res);
-                }
-                //在这里将数据发到数据页面。
-                if (conf.key != null) {
-                    if (window.plus) {
-                        //手机模式
-                        //从本地加载
-                        console.log('服务器请求完毕，正在发送到本地保存');
-                        origin.fire('pages/ajax/ajax:setData', {
-                            key: conf.key,
-                            pagesId: conf.pagesId,
-                            data: res
-                        }, function (res) {
-                        });
-                    } else {
-                        console.warn('本地保存失败，因为现在在pc端');
-                    }
-                } else {
-                    console.warn('没有发现key，所以此次数据将不会保存在本地');
-                }
             } catch (error) {
+
                 console.error(pagesId + ' 页面在请求数据结束，将数据转换为json时出错。请求地址：' + conf.url);
+                console.error(error);
+
                 if (conf.error) {
                     conf.error(res);
                 }
+                return
             }
+
+
+            if (res.res == -991) {
+                //过期
+                origin.showPage('pages/login/login');
+                return;
+            }
+
+            if (res.res == -992) {
+                //未登录
+                origin.showPage('pages/login/login');
+                return;
+            }
+
+            if (auto === true) {
+                //自动更新回调
+                if (conf._success) {
+                    //成功回调
+                    conf._success(res);
+                }
+            } else {
+                //非自动更新回调
+                if (conf.success) {
+                    //成功回调
+                    conf.success(res);
+                }
+            }
+            if (fun) {
+                fun(res);
+            }
+            //在这里将数据发到数据页面。
+            if (conf.key != null) {
+                if (window.plus) {
+                    //手机模式
+                    //从本地加载
+                    console.log('服务器请求完毕，正在发送到本地保存');
+                    origin.fire('pages/ajax/ajax:setData', {
+                        key: conf.key,
+                        pagesId: conf.pagesId,
+                        data: res
+                    }, function (res) {
+                    });
+                } else {
+                    console.warn('本地保存失败，因为现在在pc端');
+                }
+            } else {
+                console.warn('没有发现key，所以此次数据将不会保存在本地');
+            }
+
         },
         error: function (res) {
             console.error(pagesId + ' 页面在请求ajax的时候出错。请求地址：' + conf.url);
