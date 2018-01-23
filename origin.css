@@ -67,16 +67,16 @@
 
 .checkbox-box.checkbox-box-cube input[type=checkbox]:before,
 .checkbox-box.checkbox-box-cube input[type=checkbox]:after {
-  font: normal normal normal 14px/1 FontAwesome;
+  font-family: "iconfont" !important;
   font-size: 28px;
   line-height: 1; }
 
 .checkbox-box.checkbox-box-cube input[type=checkbox]:before {
-  content: "\f096"; }
+  content: "\e71d"; }
 
 .checkbox-box.checkbox-box-cube input[type=checkbox]:checked:before {
   /* content: "\f14a"; */
-  content: "\f046"; }
+  content: "\e71d"; }
 
 /*浮动按钮*/
 .fixed-btn-list {
@@ -113,9 +113,24 @@
 .text-center {
   text-align: center; }
 
+.text-gray {
+  color: #9B9B9B; }
+
+.text-yellow {
+  color: #f2e485; }
+
+.text-sm {
+  font-size: 0.5em; }
+
+.text-xs {
+  font-size: 0.3em; }
+
+.text-lg {
+  font-size: 1.5em; }
+
 /*内联表单*/
 .form-inline {
-  border: solid 1px rgba(0, 0, 0, 0.2);
+  border: solid 1px rgba(56, 33, 33, 0.2);
   margin: 10px;
   text-align: center; }
   .form-inline .add-people {
@@ -175,6 +190,7 @@
     overflow: auto;
     border-radius: 3px; }
     .test-tool-box .test-tool-box-list .test-tool-item {
+      font-size: 14px;
       padding: 15px;
       border-bottom: solid 1px #ddd;
       -webkit-transition: all 0.3s;
@@ -188,7 +204,8 @@
   border-radius: 5px;
   border: solid 1px #BFBFBF;
   color: #BFBFBF;
-  font-size: 13px; }
+  font-size: 13px;
+  display: inline-block; }
   .label.label-red {
     border-color: #FAB0B9;
     color: #E96373; }
@@ -200,7 +217,10 @@
     color: #BFBFBF; }
 
 .font-14 {
-  font-size: 14px; }
+  font-size: 14px !important; }
+
+.text-size-14 {
+  font-size: 14px !important; }
 
 .cube {
   display: block;
@@ -208,3 +228,24 @@
   background-color: transparent; }
   .cube.cube-30 {
     height: 30px; }
+
+.border-right-white {
+  border-right: solid 1px #fff; }
+
+.padding-10 {
+  padding: 10px; }
+
+.web-view {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  border: none; }
+
+.broder-radius-0 {
+  border-radius: 0 !important; }
+  .broder-radius-0 * {
+    border-radius: 0 !important; }

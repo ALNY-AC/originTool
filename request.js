@@ -3,8 +3,12 @@
 // document.getElementById('pageApp').style.display = 'none';
 
 
-var html = document.getElementsByTagName('html') [0];
-html.style.display = 'none';
+
+load();
+function load() {
+    document.getElementsByTagName('html') [0].style.opacity = '0';
+}
+
 
 var modList = {};
 

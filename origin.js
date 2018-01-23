@@ -1,6 +1,99 @@
-// @ts-nocheck
+
 // @ts-nocheck
 
+initGlobalVariable();
+
+//初始化一些全局变量
+function initGlobalVariable(conf, fun) {
+
+
+    //服务器地址===================================
+    window.serverRoot = 'http://aoadmin.com/server/';
+
+    //服务器home分组地址===================================
+    window.serverRootHome = window.serverRoot + 'home/';
+
+    //当前页面的的名字===================================
+    var name = window.location.pathname.split('/');
+    name = name[name.length - 1];
+    name = name.split('.')[0];
+    window.pagesName = name;
+
+    if (fun) fun();
+
+}
+
+
+function o_ajax(conf, auto, fun) {
+    var key = conf.key;
+    var pagesId = conf.pagesId;
+    var isServer = false;
+    if (conf.server || conf.key == null) {
+        //每次都请求最新的
+        isServer = true;
+    }
+    var _ajax = {
+        url: conf.url,
+        data: conf.data,
+        success: function (res) {
+            try {
+                if (typeof (res) == 'object') {
+                    res = res;
+                } else {
+                    res = JSON.parse(res);
+                }
+                if (auto === true) {
+                    //自动更新回调
+                    if (conf._success) {
+                        //成功回调
+                        conf._success(res);
+                    }
+                } else {
+                    //非自动更新回调
+                    if (conf.success) {
+                        //成功回调
+                        conf.success(res);
+                    }
+                }
+                if (fun) {
+                    fun(res);
+                }
+                //在这里将数据发到数据页面。
+                if (conf.key != null) {
+                    if (window.plus) {
+                        //手机模式
+                        //从本地加载
+                        console.log('服务器请求完毕，正在发送到本地保存');
+                        origin.fire('pages/ajax/ajax:setData', {
+                            key: conf.key,
+                            pagesId: conf.pagesId,
+                            data: res
+                        }, function (res) {
+                        });
+                    } else {
+                        console.warn('本地保存失败，因为现在在pc端');
+                    }
+                } else {
+                    console.warn('没有发现key，所以此次数据将不会保存在本地');
+                }
+            } catch (error) {
+                console.error(pagesId + ' 页面在请求数据结束，将数据转换为json时出错。请求地址：' + conf.url);
+                if (conf.error) {
+                    conf.error(res);
+                }
+            }
+
+
+        },
+        error: function (res) {
+            console.error(pagesId + ' 页面在请求ajax的时候出错。请求地址：' + conf.url);
+            if (conf.error) {
+                conf.error(res);
+            }
+        }
+    }
+    $.ajax(_ajax);
+}
 
 
 var origin = (function () {
@@ -12,6 +105,96 @@ var origin = (function () {
          */
         config: {},
         pageList: {},
+        out: function (fun, time) {
+
+            if (fun === false || fun == null || fun == undefined) {
+                clearTimeout(window.o_timeout);
+                console.log('计时器被关闭');
+                return;
+            }
+
+            if (window.o_timeout != null) {
+                clearTimeout(window.o_timeout);
+            }
+
+            if (time == null) {
+                time = 60000;
+            };
+            console.log('计时器被打开');
+
+            window.o_timeout = setTimeout(function () {
+                fun();
+            }, time);
+
+
+        },
+        ajax: function (conf) {
+
+            if (conf.key) {
+                if (conf.server === undefined) {
+                    conf.server = false;
+                }
+            }
+
+            if (!conf) {
+                console.error('请求参数不能为空');
+                return;
+                var conf = {
+                    //本条数据的全局唯一的key，当传入相同的key的时候回优先从本地取得数据，不传key的时候会优先从服务器取得数据，不传key的时候效果和 server=true 一样
+                    key: '',
+                    //本数据是否在后台自动检查服务器最新版本，当有最新版本的时候会自动更新，默认为true
+                    auto: true,
+                    //本次请求是否从服务器请求，默认false
+                    server: false,
+                    //请求的地址
+                    url: '',
+                    //请求时传递的参数
+                    data: {},
+                    //请求成功函数，只会返回json型数据
+                    success: function () { },
+                    //请求失败函数，ajax请求失败的时候会调用，当服务器返回数据不是json型的时候也会调用
+                    error: function () { },
+                    //当服务器有最新数据并更新完毕的时候，会调用此函数
+                    _success: function () { },
+                }
+            }
+
+            conf.pagesId = 'pc：' + window.location.href;
+
+            if (window.plus != null) {
+                //当前页面的id
+                conf.pagesId = plus.webview.currentWebview().id;
+            }
+
+            if (conf.server || conf.key == null || window.plus == null) {
+                //每次都请求最新的
+                o_ajax(conf);
+                return;
+            }
+
+            if (conf.server === false && conf.key != null) {
+                //从本地加载
+                origin.fire('pages/ajax/ajax:getData', {
+                    key: conf.key,
+                    pagesId: conf.pagesId
+                }, function (res) {
+
+                    if (res.res == false) {
+                        //本地没有数据
+                        console.log('本地没有数据，开始从服务器加载。');
+                        o_ajax(conf, false);
+                    } else {
+                        //本地有数据
+                        console.log('本地有数据，开始分发。');
+                        conf.success(res.data);
+                    }
+
+                });
+
+            }
+
+        },
+
         /**
          * 初始化配置项，
          * 全局只调用一次
@@ -21,6 +204,15 @@ var origin = (function () {
                 obj.config = res;
                 f(obj.config);
             });
+        },
+        getComponent: function (url, f) {
+
+            url = '../../' + url + '.comp.html';
+
+            $('<div/>').load(url, function (res) {
+                f(res)
+            });
+
         },
         /**
          * 预加载配置文件中的窗口，
@@ -72,7 +264,9 @@ var origin = (function () {
             var loadFunction = function (e) {
 
                 var page = plus.webview.getWebviewById(id);
+
                 if (f) f(page);
+
                 window.removeEventListener('_loadPage', loadFunction);
 
             }
@@ -83,6 +277,7 @@ var origin = (function () {
          * 显示页面
          */
         showPage: function (id) {
+
 
             if (window.plus != null) {
                 //手机模式
@@ -96,19 +291,43 @@ var origin = (function () {
                 });
 
             } else {
-
                 //电脑模式
                 window.location.href = '../../' + id + '.html';
             }
 
         },
         showNav: function () {
+
             if (!window.plus) {
                 window.location.href = '../../' + 'pages/nav/nav.html';
                 return;
             }
-            var p = plus.webview.getWebviewById('pages/nav/nav'); //导航栏页面
+            var id = 'pages/nav/nav';
+
+
+            var navPage = plus.webview.getWebviewById(id); //导航栏页面
             var selfPage = plus.webview.currentWebview(); //当前页面
+
+            if (navPage == null) {
+
+                origin.loadPage(id, function (page) {
+
+                    origin.fire(id + ':show', {
+                        pageId: selfPage.id
+                    });
+
+                    origin.showPage(id);
+
+                });
+
+            } else {
+
+                origin.fire(id + ':show', {
+                    pageId: selfPage.id
+                });
+                origin.showPage(id);
+            }
+
 
             // 设置当前页面遮罩
             selfPage.setStyle({
@@ -118,20 +337,6 @@ var origin = (function () {
                 }
             });
 
-            $.getJSON('../../pages/nav/nav' + '.json', function (res) {
-
-                var a = {
-                    url: p.id + '.html',
-                    id: p.id,
-                };
-                var b = res.pageConfig;
-                var c = $.extend(true, a, b);
-                origin.fire('pages/nav/nav', 'show', {
-                    pageId: selfPage.id
-                });
-                mui.openWindow(c);
-
-            });
 
         },
         hideNav: function () {
@@ -139,12 +344,26 @@ var origin = (function () {
             var selfPage = plus.webview.currentWebview();
             // var navPage = plus.webview.getWebviewById('pages/nav/nav'); //导航栏页面
 
-
         },
         close: function (id) {
 
-            obj.pageList[id] = null;
-            plus.webview.close(id);
+            if (window.plus == null) {
+                return;
+            }
+
+            if (id == null) {
+                //当前页
+                var selfPage = plus.webview.currentWebview();
+                id = selfPage.id;
+            }
+
+
+            // closePageId
+            var launchPage = plus.webview.getLaunchWebview(); //入口文件
+            mui.fire(launchPage, 'closePage', {
+                closePageId: id,
+            });
+
         },
         /**
          * 初始化函数，
@@ -195,17 +414,15 @@ var origin = (function () {
 
             if (a.length <= 1) {
                 //模式一：id名后面不带函数
-                // console.log('模式一');
                 eventName = b; //事件名
                 data = c; //数据
                 fun = d; //数据
 
             } else {
                 //模式二：id后面带函数
-                // console.log('模式二');
                 eventName = a[1]; //事件名
                 data = b; //数据
-                fun = c; //数据    
+                fun = c; //回调
 
             }
 
@@ -224,6 +441,9 @@ var origin = (function () {
             _data.data = data; //发送到另一个窗口的数据
             _data.pageId = selfPage.id; //发送事件的窗口的id，用于事件回调
             _data.eventName = eventName;
+
+
+
 
             if (fun) {
                 //匿名回调函数事件页面a
@@ -293,23 +513,44 @@ function pages(conf) {
 
     var debugList;
 
+
     if (conf.debug == null) {
         conf.debug = [];
     }
+
+    if (conf.isDebug == false) {
+        conf.debug = [];
+    } else {
+
+        conf.debug.push(
+            { title: "统计打开的页面数量", event: 'getPushAll' }
+        );
+        conf.methods.getPushAll = function () {
+            var length = plus.webview.all().length;
+            mui.toast('当前打开的页面数量：' + length);
+        }
+    }
+
+
     debugList = conf.debug;
+
     delete conf["debug"];
 
     debug(debugList, function (isDebug) {
-        window.isDebug = isDebug;
 
+        window.isDebug = isDebug;
 
         var pageApp = initVue(conf);
 
         if (pageApp != false) {
             if (pageApp.onLoadPage != null) {
                 pageApp.onLoadPage();
-                mui.init();
             }
+
+            if (pageApp.onShow != null) {
+                pageApp.onShow();
+            }
+
             mui.plusReady(function () {
 
                 initPage(conf, pageApp, function () {
@@ -319,8 +560,8 @@ function pages(conf) {
                 });
 
             });
-            var $page = $('html');
-            $page.fadeIn();
+
+            $("html").animate({ opacity: '1' }, 0);
 
         }
 
@@ -354,6 +595,7 @@ function initPage(conf, pageApp, f) {
     var jsonName = selfPage.id.split('/');
     jsonName = jsonName[jsonName.length - 1];
     $.getJSON(jsonName + '.json', function (config) {
+
 
         if (config.isIndex == true) {
             mui.init({
@@ -407,24 +649,26 @@ function initPage(conf, pageApp, f) {
 
         if (f) f();
 
-    })
+    });
 
 }
 /** 
  * 向触发本页面函数的页面返回数据
  * 
  */
-function push(data, f) {
+function push(data, id) {
+    var pageApp = window.pageApp;
 
+    if (id == null) {
+        id = pageApp.pageId;
+    }
 
     //当前页面的app
-    var pageApp = window.pageApp;
-    var p = plus.webview.getWebviewById(pageApp.pageId); //接收事件的窗口
+    var p = plus.webview.getWebviewById(id); //接收事件的窗口
 
     mui.fire(p, 'callback_a', {
         data: data
     });
-
 
 
 }
@@ -440,12 +684,23 @@ function App(conf) {
 
     }, false);
 
+
+    window.addEventListener('closePage', function (e) {
+
+        var closePageId = e.detail.closePageId; //想要关闭的页面
+        origin.pageList[closePageId] = null;
+        plus.webview.close(closePageId);
+
+    }, false);
+
     window.addEventListener('showPage', function (e) {
 
         var pageId = e.detail.pageId; //调用该事件的页面
         var showPageId = e.detail.showPageId; //想要打开的页面
 
         var page = plus.webview.getWebviewById(showPageId); //要打开的页面
+
+
 
         if (origin.pageList[showPageId] != null) {
 
@@ -457,13 +712,11 @@ function App(conf) {
 
             //未注册的页面
             //先预加载在打开
-            origin.loadPage(showPageId, function (page) {
 
-                mui.openWindow({
-                    id: showPageId,
-                });
-
+            appLoadPage(pageId, showPageId, function (page) {
+                origin.showPage(showPageId);
             });
+
 
         }
 
@@ -473,75 +726,111 @@ function App(conf) {
 
         var pageId = e.detail.pageId; //调用该事件的页面
         var loadPageId = e.detail.loadPageId; //想要加载的页面
-
-        $.ajax({
-            url: loadPageId + '.json',
-            success: function (res) {
-                res = JSON.parse(res);
-
-                var a = {
-                    url: loadPageId + '.html',
-                    id: loadPageId,
-                };
-                var b = res.pageConfig;
-                var c = $.extend(true, a, b);
-
-                //加载样式
-                if (c.styles != null) {
-
-                    //加载标题栏
-                    if (c.styles.titleNView != undefined) {
-
-                        //加载按钮
-                        if (c.styles.titleNView.buttons != undefined) {
-                            for (var i = 0; i < c.styles.titleNView.buttons.length; i++) {
-                                var name = c.styles.titleNView.buttons[i].onclick;
-                                c.styles.titleNView.buttons[i].onclick = function (eventName) {
-                                    return function () {
-                                        origin.fire(loadPageId, eventName);
-                                    }
-                                }(name);
-                            }
-                        }
-                    }
-
-                }
-
-                //预加载页面
-                var page = mui.preload(c);
-
-                //监听显示事件
-                page.addEventListener('show', function (e) {
-                    origin.fire(loadPageId, 'onShow');
-                }, false);
-
-                //监听关闭事件
-                page.addEventListener('hide', function (e) {
-                    origin.fire(loadPageId, 'onHide');
-                }, false);
-
-                origin.pageList[loadPageId] = page;
-                origin.pageList[loadPageId].config = c;
-
-                var _page = plus.webview.getWebviewById(pageId);
-
-                mui.fire(_page, '_loadPage');
-
-            },
-            error: function () {
-                console.error(loadPageId + '.json  文件错误！');
-            }
-        });
+        appLoadPage(pageId, loadPageId)
 
     }, false);
 
     origin.init(function (f) {
-
         conf.onLaunch();
-
     });
 
 }
+
+function appLoadPage(pageId, loadPageId, f) {
+
+
+
+
+
+    if (origin.pageList[loadPageId] != null) {
+
+        if (f) {
+            f(origin.pageList[loadPageId]);
+        } else {
+            //回到调用者
+            var _page_ = plus.webview.getWebviewById(pageId);
+            mui.fire(_page_, '_loadPage');
+        }
+
+        return;
+    }
+
+
+    $.ajax({
+        url: loadPageId + '.json',
+        success: function (res) {
+            res = JSON.parse(res);
+
+            var a = {
+                url: loadPageId + '.html',
+                id: loadPageId,
+            };
+            var b = res.pageConfig;
+            var c = $.extend(true, a, b);
+
+
+
+
+            //加载样式
+            if (c.styles != null) {
+
+                //加载标题栏
+                if (c.styles.titleNView != undefined) {
+
+                    //加载按钮
+                    if (c.styles.titleNView.buttons != undefined) {
+                        for (var i = 0; i < c.styles.titleNView.buttons.length; i++) {
+                            var name = c.styles.titleNView.buttons[i].onclick;
+                            c.styles.titleNView.buttons[i].onclick = (function (eveName) {
+                                return function () {
+                                    origin.fire(loadPageId, eveName);
+                                }
+                            }(name));
+
+                        }
+                    }
+                }
+
+            }
+
+            //预加载页面
+            var page = mui.preload(c);
+
+            var _page = plus.webview.getWebviewById(loadPageId);
+
+
+            origin.pageList[loadPageId] = _page;
+            origin.pageList[loadPageId].config = c;
+
+            //监听显示事件
+            _page.addEventListener('show', function (e) {
+
+                origin.fire(loadPageId, 'onShow');
+
+            }, false);
+
+            //监听关闭事件
+            _page.addEventListener('hide', function (e) {
+
+                origin.fire(loadPageId, 'onHide');
+
+            }, false);
+
+            //回到调用者
+            var _page_ = plus.webview.getWebviewById(pageId);
+            if (f) {
+                f(_page);
+            } else {
+                mui.fire(_page_, '_loadPage');
+            }
+
+        },
+        error: function () {
+            console.error(loadPageId + '.json  文件错误！');
+        }
+    });
+}
+
 
 function getApp(f) {
 
@@ -683,4 +972,21 @@ function debug(debugList, f) {
 
     });
 
+}
+
+
+//将数字变成千分位
+
+var formatMoney = function (money) {
+    money = money + '';
+    //分开点
+    var _money = money.split('.');
+    _money[0] = (_money[0] || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+
+
+    if (_money[1] != null) {
+        return (_money[0] + '.' + _money[1]);
+    } else {
+        return _money[0];
+    }
 }
