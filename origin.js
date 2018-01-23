@@ -55,15 +55,18 @@ function o_ajax(conf, auto, fun) {
                 if (typeof (res) == 'object') {
                     res = res;
                 } else {
+
                     res = JSON.parse(res);
                     if (res.rse == -991) {
                         //过期
                         origin.showPage('pages/login/login');
+                        return;
                     }
 
-                    if ($is == -992) {
+                    if (rse.res == -992) {
                         //未登录
                         origin.showPage('pages/login/login');
+                        return;
                     }
 
                 }
