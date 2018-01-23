@@ -6,7 +6,6 @@ initGlobalVariable();
 //初始化一些全局变量
 function initGlobalVariable(conf, fun) {
 
-
     //服务器地址===================================
     window.serverRoot = 'http://aoadmin.com/server/';
 
@@ -18,9 +17,7 @@ function initGlobalVariable(conf, fun) {
     name = name[name.length - 1];
     name = name.split('.')[0];
     window.pagesName = name;
-
     if (fun) fun();
-
 }
 
 
@@ -32,8 +29,18 @@ function o_ajax(conf, auto, fun) {
         //每次都请求最新的
         isServer = true;
     }
+
+    var url;
+
+    if (str.indexOf("http") == -1) {
+        //没有http
+        url = serverRootHome + conf.url;
+    } else {
+        url = conf.url;
+    }
+
     var _ajax = {
-        url: conf.url,
+        url: url,
         data: conf.data,
         success: function (res) {
             try {
