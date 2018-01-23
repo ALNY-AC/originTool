@@ -42,6 +42,7 @@ function o_ajax(conf, auto, fun) {
     var _ajax = {
         url: url,
         data: conf.data,
+        type: conf.type,
         success: function (res) {
             try {
                 if (typeof (res) == 'object') {
@@ -89,8 +90,6 @@ function o_ajax(conf, auto, fun) {
                     conf.error(res);
                 }
             }
-
-
         },
         error: function (res) {
             console.error(pagesId + ' 页面在请求ajax的时候出错。请求地址：' + conf.url);
