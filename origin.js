@@ -38,10 +38,16 @@ function o_ajax(conf, auto, fun) {
     } else {
         url = conf.url;
     }
+    var data = conf.data;
+
+    if (conf.isLoginModel === true) {
+        data.user_id = origin.getLocal('user_id');
+        data.token = origin.getLocal('token');
+    }
 
     var _ajax = {
         url: url,
-        data: conf.data,
+        data: data,
         type: conf.type,
         success: function (res) {
             try {
