@@ -57,19 +57,23 @@ function o_ajax(conf, auto, fun) {
                 } else {
 
                     res = JSON.parse(res);
-                    if (res.rse == -991) {
-                        //过期
-                        origin.showPage('pages/login/login');
-                        return;
-                    }
 
-                    if (rse.res == -992) {
-                        //未登录
-                        origin.showPage('pages/login/login');
-                        return;
-                    }
+
 
                 }
+
+                if (res.res == -991) {
+                    //过期
+                    origin.showPage('pages/login/login');
+                    return;
+                }
+
+                if (rse.res == -992) {
+                    //未登录
+                    origin.showPage('pages/login/login');
+                    return;
+                }
+
                 if (auto === true) {
                     //自动更新回调
                     if (conf._success) {
