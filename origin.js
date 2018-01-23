@@ -32,7 +32,7 @@ function o_ajax(conf, auto, fun) {
 
     var url;
 
-    if (str.indexOf("http") == -1) {
+    if (conf.url.indexOf("http") == -1) {
         //没有http
         url = serverRootHome + conf.url;
     } else {
