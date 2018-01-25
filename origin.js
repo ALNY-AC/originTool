@@ -126,6 +126,10 @@ function o_ajax(conf, auto, fun) {
         },
         error: function (res) {
             console.error(pagesId + ' 页面在请求ajax的时候出错。请求地址：' + url);
+            console.error('错误信息：');
+            console.error(JSON.stringify(res));
+            console.error('===================================');
+
             if (conf.error) {
                 conf.error(res);
             }
