@@ -125,7 +125,7 @@ function o_ajax(conf, auto, fun) {
 
         },
         error: function (res) {
-            console.error(pagesId + ' 页面在请求ajax的时候出错。请求地址：' + conf.url);
+            console.error(pagesId + ' 页面在请求ajax的时候出错。请求地址：' + url);
             if (conf.error) {
                 conf.error(res);
             }
@@ -387,6 +387,7 @@ var origin = (function () {
         close: function (id) {
 
             if (window.plus == null) {
+                mui.back();
                 return;
             }
 
