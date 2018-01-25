@@ -42,8 +42,9 @@ function o_ajax(conf, auto, fun) {
     var data = conf.data;
 
     if (conf.isLoginModel !== true) {
-        data.user_id = origin.getLocal('user_id');
-        data.token = origin.getLocal('token');
+
+        data.user_id = origin.getLocal('user_id') === undefined ? '' : origin.getLocal('user_id');
+        data.token = origin.getLocal('token') === undefined ? '' : origin.getLocal('token');
     }
 
     var _ajax = {
@@ -515,12 +516,12 @@ var origin = (function () {
         getLocal: function (key) {
             var value;
             try {
-                value = localStorage.getItem(key);
+                value = localStorage.getItem(key) === undefined ? null : localStorage.getItem(key);
                 //正确解析了json
                 return value;
             } catch (error) {
                 //没有正确解析json
-                return localStorage.getItem(key);
+                return localStorage.getItem(key) === undefined ? null : localStorage.getItem(key);
             }
         },
         removeLocal: function (key) {
