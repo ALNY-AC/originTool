@@ -524,9 +524,12 @@ var origin = (function () {
             try {
                 value = localStorage.getItem(key) === undefined ? null : localStorage.getItem(key);
                 //正确解析了json
+                console.warn('本地储存解析成了json');
+
                 return value;
             } catch (error) {
                 //没有正确解析json
+                console.warn('本地储存未解析成json,返回字符串');
                 return localStorage.getItem(key) === undefined ? null : localStorage.getItem(key);
             }
         },
